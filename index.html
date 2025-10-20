@@ -307,132 +307,186 @@
         </footer>
     </div>
 
-    <script>
-        // --- CORRUPTED TEXT EFFECT SCRIPT ---
-        const corruptedText = document.querySelector('.corrupted-text');
-        const originalText = corruptedText.dataset.value;
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const symbols = "!<>-_\\/[]{}—=+*^?#_";
-        let interval = null;
+<script>
+    // --- CORRUPTED TEXT EFFECT SCRIPT --- (This is unchanged)
+    const corruptedText = document.querySelector('.corrupted-text');
+    const originalText = corruptedText.dataset.value;
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const symbols = "!<>-_\\/[]{}—=+*^?#_";
+    let interval = null;
 
-        function scramble() {
-            let iteration = 0;
-            clearInterval(interval);
-            interval = setInterval(() => {
-                corruptedText.innerText = originalText
-                    .split("").map((letter, index) => {
-                        if(index < iteration) return originalText[index];
-                        return Math.random() < 0.6 ? letters[Math.floor(Math.random() * 26)] : symbols[Math.floor(Math.random() * symbols.length)];
-                    }).join("");
-                if(iteration >= originalText.length) clearInterval(interval);
-                iteration += 1 / 3;
-            }, 30);
-        }
-        setInterval(scramble, 5000);
-        scramble();
+    function scramble() {
+        let iteration = 0;
+        clearInterval(interval);
+        interval = setInterval(() => {
+            corruptedText.innerText = originalText
+                .split("").map((letter, index) => {
+                    if (index < iteration) return originalText[index];
+                    return Math.random() < 0.6 ? letters[Math.floor(Math.random() * 26)] : symbols[Math.floor(Math.random() * symbols.length)];
+                }).join("");
+            if (iteration >= originalText.length) clearInterval(interval);
+            iteration += 1 / 3;
+        }, 30);
+    }
+    setInterval(scramble, 5000);
+    scramble();
 
-        // --- THEME TOGGLE SCRIPT ---
-        const themeToggle = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        const body = document.body;
-        function applyTheme(theme) { if (theme === 'light') { body.classList.add('light-mode'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); } else { body.classList.remove('light-mode'); sunIcon.classList.remove('hidden'); moonIcon.classList.add('hidden'); } }
-        const savedTheme = localStorage.getItem('theme');
-        applyTheme(savedTheme || 'dark');
-        themeToggle.addEventListener('click', () => { const isLight = body.classList.toggle('light-mode'); const currentTheme = isLight ? 'light' : 'dark'; sunIcon.classList.toggle('hidden', isLight); moonIcon.classList.toggle('hidden', !isLight); localStorage.setItem('theme', currentTheme); });
+    // --- THEME TOGGLE SCRIPT --- (This is unchanged)
+    const themeToggle = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    const body = document.body;
+    function applyTheme(theme) { if (theme === 'light') { body.classList.add('light-mode'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); } else { body.classList.remove('light-mode'); sunIcon.classList.remove('hidden'); moonIcon.classList.add('hidden'); } }
+    const savedTheme = localStorage.getItem('theme');
+    applyTheme(savedTheme || 'dark');
+    themeToggle.addEventListener('click', () => { const isLight = body.classList.toggle('light-mode'); const currentTheme = isLight ? 'light' : 'dark'; sunIcon.classList.toggle('hidden', isLight); moonIcon.classList.toggle('hidden', !isLight); localStorage.setItem('theme', currentTheme); });
 
-        // --- CUSTOM CURSOR SCRIPT ---
-        const cursor = document.querySelector(".emo-cursor");
-        window.addEventListener("mousemove", function (e) { cursor.style.left = `${e.clientX}px`; cursor.style.top = `${e.clientY}px`; });
+    // --- CUSTOM CURSOR SCRIPT --- (This is unchanged)
+    const cursor = document.querySelector(".emo-cursor");
+    window.addEventListener("mousemove", function (e) { cursor.style.left = `${e.clientX}px`; cursor.style.top = `${e.clientY}px`; });
 
-        // --- SCROLL ANIMATION SCRIPT ---
-        const observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } }); });
-        const sectionsToAnimate = document.querySelectorAll('.fade-in-section');
-        sectionsToAnimate.forEach((el) => observer.observe(el));
-        
-        // --- LAST.FM API SCRIPT ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const apiKey = 'ab6a26baf647f8b63f8c236d13e882bc';
-            const username = 'Alekxsses';
-            const nowPlayingEl = document.getElementById('now-playing');
-            const topTracksListEl = document.getElementById('top-tracks-list');
-            const topArtistsListEl = document.getElementById('top-artists-list');
+    // --- SCROLL ANIMATION SCRIPT --- (This is unchanged)
+    const observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } }); });
+    const sectionsToAnimate = document.querySelectorAll('.fade-in-section');
+    sectionsToAnimate.forEach((el) => observer.observe(el));
 
-            const fetchFromLastFM = async (params) => {
-                const url = new URL('https://ws.audioscrobbler.com/2.0/');
-                url.search = new URLSearchParams({
-                    ...params,
-                    user: username,
-                    api_key: apiKey,
-                    format: 'json',
-                });
+    // --- LAST.FM API SCRIPT --- (THIS IS THE PART WE ARE FIXING)
+    document.addEventListener('DOMContentLoaded', () => {
+        const apiKey = 'ab6a26baf647f8b63f8c236d13e882bc';
+        const username = 'Alekxsses';
+        const nowPlayingEl = document.getElementById('now-playing');
+        const topTracksListEl = document.getElementById('top-tracks-list');
+        const topArtistsListEl = document.getElementById('top-artists-list');
 
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    return await response.json();
-                } catch (error) {
-                    console.error("Error fetching from Last.fm:", error);
-                    return null;
-                }
-            };
+        const fetchFromLastFM = async (params) => {
+            const url = new URL('https://ws.audioscrobbler.com/2.0/');
+            url.search = new URLSearchParams({
+                ...params,
+                user: username,
+                api_key: apiKey,
+                format: 'json',
+            });
 
-            const renderNowPlaying = (data) => {
-                if (!data?.recenttracks?.track?.[0]) {
-                    nowPlayingEl.innerHTML = '<p>Could not load recent track.</p>';
-                    return;
-                }
-                const track = data.recenttracks.track[0];
-                const isNowPlaying = track['@attr']?.nowplaying === 'true';
-                const imageUrl = track.image.find(img => img.size === 'large')['#text'] || 'placeholder.png';
-                
-                nowPlayingEl.innerHTML = `
-                    <img src="${imageUrl}" alt="Album art for ${track.name}">
-                    <div id="now-playing-info">
-                        <div id="now-playing-status">${isNowPlaying ? 'Now Playing' : 'Recently Played'}</div>
-                        <div class="track"><a href="${track.url}" target="_blank" rel="noopener noreferrer">${track.name}</a></div>
-                        <div class="artist">${track.artist['#text']}</div>
-                    </div>
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error("Error fetching from Last.fm:", error);
+                return null;
+            }
+        };
+
+        const renderNowPlaying = (data) => {
+            if (!data?.recenttracks?.track?.[0]) {
+                nowPlayingEl.innerHTML = '<p>Could not load recent track.</p>';
+                return;
+            }
+            const track = data.recenttracks.track[0];
+            const isNowPlaying = track['@attr']?.nowplaying === 'true';
+            // Important: Now Playing *does* include images, so this logic is fine
+            const imageUrl = track.image.find(img => img.size === 'large')?.['#text'] || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+            nowPlayingEl.innerHTML = `
+                <img src="${imageUrl}" alt="Album art for ${track.name}">
+                <div id="now-playing-info">
+                    <div id="now-playing-status">${isNowPlaying ? 'Now Playing' : 'Recently Played'}</div>
+                    <div class="track"><a href="${track.url}" target="_blank" rel="noopener noreferrer">${track.name}</a></div>
+                    <div class="artist">${track.artist['#text']}</div>
+                </div>
+            `;
+            if (isNowPlaying) nowPlayingEl.classList.add('is-listening');
+        };
+
+        // --- NEW FUNCTION FOR TOP TRACKS ---
+        const renderTopTracks = async () => {
+            // Step 1: Get the list of top tracks
+            const listData = await fetchFromLastFM({ method: 'user.gettoptracks', period: '7day', limit: 5 });
+            if (!listData?.toptracks?.track) {
+                topTracksListEl.innerHTML = '<li>Could not load top tracks.</li>';
+                return;
+            }
+
+            // Step 2: Create promises to fetch detailed info for each track
+            const trackInfoPromises = listData.toptracks.track.map(track =>
+                fetchFromLastFM({ method: 'track.getInfo', artist: track.artist.name, track: track.name })
+            );
+            
+            // Step 3: Wait for all detailed info to be fetched
+            const trackInfos = await Promise.all(trackInfoPromises);
+
+            // Step 4: Build the HTML using the detailed info
+            const html = trackInfos.map((info, index) => {
+                if (!info?.track) return ''; // Skip if a fetch failed
+                const originalTrack = listData.toptracks.track[index];
+                const track = info.track;
+                // Get image from the detailed `track.album` object
+                const imageUrl = track.album?.image.find(i => i.size === 'large')?.['#text'] || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+                return `
+                    <li>
+                        <img src="${imageUrl}" alt="Album art for ${track.name}">
+                        <div class="list-item-info">
+                            <a href="${track.url}" target="_blank" rel="noopener noreferrer">${track.name}</a>
+                            <span>${parseInt(originalTrack.playcount).toLocaleString()} plays</span>
+                        </div>
+                    </li>
                 `;
-                if(isNowPlaying) nowPlayingEl.classList.add('is-listening');
-            };
+            }).join('');
+            topTracksListEl.innerHTML = html || '<li>No top tracks found.</li>';
+        };
+        
+        // --- NEW FUNCTION FOR TOP ARTISTS ---
+        const renderTopArtists = async () => {
+             // Step 1: Get the list of top artists
+            const listData = await fetchFromLastFM({ method: 'user.gettopartists', period: '7day', limit: 5 });
+            if (!listData?.topartists?.artist) {
+                topArtistsListEl.innerHTML = '<li>Could not load top artists.</li>';
+                return;
+            }
 
-            const renderTopList = (element, data, type) => {
-                const items = type === 'tracks' ? data?.toptracks?.track : data?.topartists?.artist;
-                if (!items || items.length === 0) {
-                    element.innerHTML = '<li>Could not load data.</li>';
-                    return;
-                }
-                element.innerHTML = items.slice(0, 5).map(item => {
-                    // Find the medium image, or fallback to the first available image, or use a transparent pixel
-                    const imageUrl = (item.image.find(i => i.size === 'medium') || item.image[0])?.['#text'] || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
-                    
-                    return `
-                        <li>
-                            <img src="${imageUrl}" alt="Image for ${item.name}">
-                            <div class="list-item-info">
-                                <a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a>
-                                <span>${parseInt(item.playcount).toLocaleString()} plays</span>
-                            </div>
-                        </li>
-                    `;
-                }).join('');
-            };
+            // Step 2: Create promises to fetch detailed info for each artist
+            const artistInfoPromises = listData.topartists.artist.map(artist =>
+                fetchFromLastFM({ method: 'artist.getInfo', artist: artist.name })
+            );
 
-            const loadMusicData = async () => {
-                const [recent, tracks, artists] = await Promise.all([
-                    fetchFromLastFM({ method: 'user.getrecenttracks', limit: 1 }),
-                    fetchFromLastFM({ method: 'user.gettoptracks', period: '7day' }),
-                    fetchFromLastFM({ method: 'user.gettopartists', period: '7day' })
-                ]);
+            // Step 3: Wait for all detailed info to be fetched
+            const artistInfos = await Promise.all(artistInfoPromises);
 
-                renderNowPlaying(recent);
-                renderTopList(topTracksListEl, tracks, 'tracks');
-                renderTopList(topArtistsListEl, artists, 'artists');
-            };
+            // Step 4: Build the HTML using the detailed info
+            const html = artistInfos.map((info, index) => {
+                if (!info?.artist) return ''; // Skip if a fetch failed
+                const originalArtist = listData.topartists.artist[index];
+                const artist = info.artist;
+                // Get image directly from the detailed artist object
+                const imageUrl = artist.image.find(i => i.size === 'large')?.['#text'] || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
-            loadMusicData();
-        });
-    </script>
+                return `
+                    <li>
+                        <img src="${imageUrl}" alt="Image for ${artist.name}">
+                        <div class="list-item-info">
+                            <a href="${artist.url}" target="_blank" rel="noopener noreferrer">${artist.name}</a>
+                            <span>${parseInt(originalArtist.playcount).toLocaleString()} plays</span>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+            topArtistsListEl.innerHTML = html || '<li>No top artists found.</li>';
+        };
+
+        const loadMusicData = async () => {
+            // Fetch Now Playing first, as it's a single quick call
+            const recent = await fetchFromLastFM({ method: 'user.getrecenttracks', limit: 1 });
+            renderNowPlaying(recent);
+
+            // Now, trigger the functions that handle the multi-step fetching for lists.
+            // We don't need to wait for them to finish, they will update the page when they are done.
+            renderTopTracks();
+            renderTopArtists();
+        };
+
+        loadMusicData();
+    });
+</script>
 </body>
 </html>
