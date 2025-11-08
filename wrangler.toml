@@ -6,6 +6,6 @@ compatibility_date = "2023-10-30"
 # This section links our D1 database to the worker
 # The 'binding' is how we will access it in our code (env.DB)
 [[d1_databases]]
-binding = "secret_santa_db"
+binding = "DB"
 database_name = "secret-santa-db"
-database_id = "41b51c25-4a2c-4ba8-a846-99b01ee1b130" # 👈 PASTE YOUR ID HERE
+database_id = "41b51c25-4a2c-4ba8-a846-99b01ee1b130"

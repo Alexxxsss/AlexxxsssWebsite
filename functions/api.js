@@ -11,7 +11,7 @@ app.use('*', cors());
 // Endpoint to get all people for the dropdown
 app.get('/all-people', async (c) => {
   try {
-    const { results } = await c.env.secret_santa_db.prepare('SELECT name FROM all_people ORDER BY name').all();
+    const { results } = await c.env.DB.prepare('SELECT name FROM all_people ORDER BY name').all();
     return c.json({ success: true, people: results });
   } catch (e) {
     return c.json({ success: false, error: e.message }, 500);
@@ -29,7 +29,7 @@ app.post('/draw', async (c) => {
 
     // Find a random person from people_left who is NOT the person drawing.
     // This prevents someone from drawing their own name.
-    const stmt = c.env.secret_santa_db.prepare(
+    const stmt = c.env.DB.prepare(
       'SELECT name FROM people_left WHERE name != ? ORDER BY RANDOM() LIMIT 1'
     );
     const { results } = await stmt.bind(drawerName).all();
@@ -41,7 +41,7 @@ app.post('/draw', async (c) => {
     const drawnPerson = results[0];
 
     // IMPORTANT: Remove the drawn person from the pool
-    const deleteStmt = c.env.secret_santa_db.prepare('DELETE FROM people_left WHERE name = ?');
+    const deleteStmt = c.env.DB.prepare('DELETE FROM people_left WHERE name = ?');
     await deleteStmt.bind(drawnPerson.name).run();
 
     return c.json({ success: true, drawnPerson: drawnPerson.name });
