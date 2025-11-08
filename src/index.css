@@ -1,3 +1,24 @@
+body {
+  /* The path is relative to the CSS file's location */
+  background-image: url('./assets/meias_julkalas.png');
+
+  /* This makes the image cover the entire background */
+  background-size: cover;
+
+  /* This centers the image */
+  background-position: center;
+
+  /* This prevents the image from repeating if it's smaller than the screen */
+  background-repeat: no-repeat;
+  
+  /* This fixes the background in place, so content scrolls over it. Optional but nice! */
+  background-attachment: fixed;
+
+  /* Ensure the body takes up at least the full height of the viewport */
+  min-height: 100vh;
+
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -5,7 +26,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -33,6 +53,7 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: #000000;
 }
 
 button {

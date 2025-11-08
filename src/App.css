@@ -12,11 +12,17 @@
   justify-content: center;
   min-height: 100vh;
   text-align: center;
+  padding-left: 20%;
 }
 
 h1 {
   font-size: 3em;
   margin-bottom: 0.5rem;
+}
+
+p{
+    color: #000000;
+
 }
 
 .controls {
